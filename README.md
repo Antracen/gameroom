@@ -1,3 +1,6 @@
+# gameroom
+Site where people can create and join rooms where they can play games together, such as UNO.
+
 This project was developed in collaboration with https://github.com/jacobsorme
 
 # TODO
