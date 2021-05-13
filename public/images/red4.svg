@@ -1,0 +1,15 @@
+<svg viewBox="0 0 250 350" xmlns="http://www.w3.org/2000/svg">
+  <rect width="250" height="350" rx="20" style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(0,0,0)"/>
+  <rect width="230" height="330" rx="10" x="10" y="10" style="fill:red;stroke-width:1;stroke:rgb(0,0,0)"/>
+  
+  <text x="93" y="203" style="fill:rgb(0,0,0);font: bold 100px sans-serif;" >4</text>
+  <text x="90" y="200" style="fill:rgb(255,255,255);font: bold 100px sans-serif;" >4</text>
+  
+  <text x="20" y="50" style="fill:rgb(0,0,0);font: bold 40px sans-serif;" >4</text>
+  <text x="17" y="47" style="fill:rgb(255,255,255);font: bold 40px sans-serif;" >4</text>
+  
+  <text x="-230" y="-300" style="fill:rgb(0,0,0);font: bold 40px sans-serif;" transform="rotate(180,0,0)" >4</text>
+  <text x="-227" y="-297" style="fill:rgb(255,255,255);font: bold 40px sans-serif;" transform="rotate(180,0,0)" >4</text>
+  
+  <ellipse cx="210" cy="35" rx="120" ry="70" style="fill:none;stroke:white;stroke-width:10" transform="rotate(45,0,0)"/>
+</svg>

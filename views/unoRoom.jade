@@ -1,0 +1,192 @@
+extends ./gameRoom.jade
+
+block gameBody
+    body
+        div#gameArea.gameArea
+            //- comment2
+            div#pile.pile
+            img#deck.deck(src="images/deck.svg", onclick="deckClicked()")
+            div#cardsInHand.cardsInHand
+
+        div#status.status(style="visible: false;")
+            p#cardsStatus(style="white-space: pre")
+
+    script.
+        function cardClicked(card) {
+            socket.emit("placeCard", parseInt(card.getAttribute("position")));
+        }
+
+        function raiseCardInHandToHeight(card, height) {
+            let transform = card.style.transform;
+
+            // translate(207.5px, 0px)
+            let arr = transform.split(",");    // ["translate(207.5px", " 0px)"]
+            let arr2 = arr[0].split("(");      // ["translate", "207.5px"]
+
+            card.style.transform = arr[0] + `,${height}px)`// arr2[0]
+        } 
+
+        function cardHovered(card) {
+            cards = document.getElementById("cardsInHand").childNodes;
+            let cardPosition = parseInt(card.getAttribute("position"));
+            
+            let scaling = -3;
+            let neighboursToRaise = 3;
+            
+            // Self raise
+            let selfRaise = -domHandler.getWidth("card") / 2;
+            raiseCardInHandToHeight(card, selfRaise);
+            
+            // Neighbour raise
+            for(let i = 1; i <= neighboursToRaise; i++) {
+                let heightOffset = scaling*(1 + neighboursToRaise - i);
+                if(cardPosition-i >= 0) raiseCardInHandToHeight(cards[cardPosition-i],heightOffset);
+                if(cardPosition+i < cards.length) raiseCardInHandToHeight(cards[cardPosition+i],heightOffset);
+            }  
+        }
+        
+        function cardLeaveHover(card) {
+            cards = document.getElementById("cardsInHand").childNodes;
+            for(let i = 0; i < cards.length; i++){
+                raiseCardInHandToHeight(cards[i], 0);
+            }
+        }
+
+        function deckClicked() {
+            socket.emit("pickupCard", {});
+        }
+
+        function cardImg(card, translationX, cardNum) {
+            let str = card.color + card.number + ".svg";
+
+            let img = document.createElement("img");
+            // left = parseInt(img.getAttribute("left").slice(0,-2))
+            // img.setAttribute("style",)
+            img.setAttribute("class", "card");
+            img.setAttribute("src", "images/" + str);
+            img.setAttribute("color", card.color); // Enables us to retrieve in cardClicked
+            img.setAttribute("number", card.number); // Enables us to retrieve in cardClicked 
+            img.setAttribute("position", cardNum)
+            img.setAttribute("onclick", "cardClicked(event.target)")
+            img.setAttribute("onmouseover", "cardHovered(event.target)")
+            img.setAttribute("onmouseout", "cardLeaveHover(event.target)")
+            img.style.transform = `translate(${translationX}px,0%)`;
+
+            return img;
+        }
+
+        function randInt(from, to) {
+            return Math.floor(Math.random() * to) + from;
+        }
+
+        function pileCardImg(card) {
+            let str = card.color + card.number + ".svg";
+
+            let img = document.createElement("img");
+            img.setAttribute("class", "pileCard");
+            /*
+                Future improvement:
+                    Have pile relative to the players
+                    Imagine they sit in a circle and place the card
+                    fairly straight, relative to their position
+                    Plus / minus some random offset
+            */
+            deg = randInt(1, 360);
+            trans = [randInt(-20,20), randInt(-20,20)]
+            img.setAttribute("style",`${img.getAttribute("style")};transform: rotate(${deg}deg) translate(${trans[0]}px,${trans[1]}px)`)
+            img.setAttribute("src", "images/" + str);
+            img.setAttribute("color", card.color); // Enables us to retrieve in cardClicked
+            img.setAttribute("number", card.number); // Enables us to retrieve in cardClicked 
+
+            return img;
+        }
+
+        function getLocalPile() {
+            return document.getElementById("pile").childNodes;
+        }
+
+        class DomHandler {
+            constructor() {
+                let cardWidth = 70;
+                this.elements = {
+                    gameArea: {width: 1000, height: 500},
+                    pile: {width: 100, height: 100},
+                    deck: {width: cardWidth, height: null},
+                    cardsInHand: {width: 600, height: 100},
+                    card: {width: cardWidth, height: null},
+                    pileCard: {width: cardWidth, height: null}
+                };
+            }
+
+            resizeDomElements() {
+                for(const [id, props] of Object.entries(this.elements)){
+                    let domElements = document.getElementsByClassName(id);
+                    for(let i = 0; i < domElements.length; i++){
+                        let domElement =  domElements[i];
+                        if(props.width) domElement.style.setProperty("width", props.width + "px")
+                        if(props.height) domElement.style.setProperty("height", props.height + "px");
+                    }                    
+                }  
+            }
+
+            getWidth(element) {
+                return this.elements[element].width;
+            }
+
+            getHeight(element) {
+                return this.elements[element].height;
+            }
+        }
+
+        console.log("This room is for UNO");
+        console.log(socket);
+
+        let domHandler = new DomHandler();
+        domHandler.resizeDomElements();
+
+        function updateCardsStatus(msg){
+            document.getElementById("cardsStatus").innerHTML = "";
+            for (const [key, value] of Object.entries(msg.guestInfos)) {
+                document.getElementById("cardsStatus").innerHTML += key + " has " + value.numCards + " cards\n";
+            }
+        }
+
+        socket.on("roomInfo", (msg) => {
+            /* roomInfo = number of guests, card on table */
+            updateCardsStatus(msg);
+            for(let i = getLocalPile().length; i < msg.pile.length; i++){
+                console.log("Placing new card on deck", msg.pile[i]);
+                document.getElementById("pile").appendChild(pileCardImg(msg.pile[i], true));
+            }
+            // document.getElementById("cardsInHand").innerHTML = "";
+
+            domHandler.resizeDomElements();
+        });
+
+        socket.on("playerInfo", (msg) => {
+            /* playerInfo = cards in my hand */
+            let cardsInHand = document.getElementById("cardsInHand")
+            cardsInHand.innerHTML = "";
+
+            let translationStepSize = domHandler.getWidth("card") - ((domHandler.getWidth("cardsInHand") - domHandler.getWidth("card")) / (msg.hand.cards.length - 1));
+            translationStepSize = Math.max(translationStepSize, 15);
+
+            let cardsInHandTranslation = 0
+            let totalHandWidth = domHandler.getWidth("card") + (msg.hand.cards.length - 1) * (domHandler.getWidth("card") - translationStepSize);
+            if(totalHandWidth < domHandler.getWidth("cardsInHand")) {
+                // Should center hand
+                cardsInHandTranslation = (domHandler.getWidth("cardsInHand") - totalHandWidth) * 0.5;
+            }
+            
+            let translationX = 0;
+            let cardNum = 0;
+            for(let card of msg.hand.cards) {
+                translationX -= translationStepSize;
+
+                cardsInHand.appendChild(cardImg(card, translationX + cardsInHandTranslation, cardNum));
+                cardNum++;
+            }
+
+            domHandler.resizeDomElements();
+        });
+

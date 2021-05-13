@@ -1,0 +1,22 @@
+doctype html
+html(style="height: 100%;")
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="/socket.io/socket.io.js")
+    script.
+      const socket = io();
+
+      const params = !{JSON.stringify(params)};
+      console.log(params);
+
+      socket.emit("joinRoom", params);
+
+      socket.on("joinRoomSuccess", (res) => {
+        if(!res) {
+          alert("User with name " + params.userName + " already exists in room");
+          window.location.href = "/";
+        }
+      });
+  
+  block gameBody

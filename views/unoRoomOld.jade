@@ -1,0 +1,78 @@
+extends ./gameRoom.jade
+
+block gameBody
+    body(style='background-color:grey;display:flex;flex-direction:column;align-items:stretch;align-content:stretch;height: 100%;margin: 0;')
+
+    #upperScreen(style='display:flex;flex-grow: 3;justify-content: center;')
+        div(style='display:flex;flex-direction:column;flex-grow:1;max-width:900px;justify-content:center')
+            div(style="display:flex;flex-grow:1;max-height:350px;")
+                div#status(style="flex-grow:1;") 
+                div#cardsOnTable(style='display:flex;flex-direction:row;flex-grow:3;')
+    #lowerScreen(style='display:flex;flex-grow:3;justify-content:center;')
+        div(style='display:flex;flex-direction:column;flex-grow:3;max-width:900px;justify-content:center;')
+            div#cardsInHand(style='flex-grow:3;max-height:350px;color:white;display:grid;grid-template-columns: repeat(auto-fit, minmax(10px, max-content));align-items:end;')
+
+    script.
+        function cardClicked(card) {
+            socket.emit("placeCard", {
+                "color": card.getAttribute("color"),
+                "number": card.getAttribute("number"),
+            });
+        }
+
+        function deckClicked() {
+            socket.emit("pickupCard", {});
+        }
+
+        function cardImg(card) {
+            let str = card.color + card.number + ".svg";
+
+            let img = document.createElement("img");
+            img.setAttribute("src", "images/" + str);
+            img.setAttribute("width", "auto");
+            img.setAttribute("height", "80%");
+            img.setAttribute("color", card.color);
+            img.setAttribute("number", card.number);
+
+            img.setAttribute("onclick", "cardClicked(event.target)")
+
+            return img;
+        }
+
+        function deckImg() {
+            let img = document.createElement("img");
+            img.setAttribute("src", "images/deck.svg");
+            img.setAttribute("width", "auto");
+            img.setAttribute("height", "80%");
+
+            img.setAttribute("onclick", "deckClicked()")
+
+            return img;
+        }
+
+        console.log("This room is for UNO");
+        console.log(socket);
+
+        socket.on("roomInfo", (msg) => {
+            /* roomInfo = number of guests, card on table */
+            document.getElementById("status").innerHTML = "";
+            for (const [key, value] of Object.entries(msg.guestInfos)) {
+                let p = document.createElement("p");
+                p.innerHTML = key + " has " + value.numCards + " cards";
+                document.getElementById("status").appendChild(p);
+            }
+
+            document.getElementById("cardsOnTable").innerHTML = "";
+
+            document.getElementById("cardsOnTable").appendChild(deckImg());
+            document.getElementById("cardsOnTable").appendChild(cardImg(msg.tableCard));
+        });
+
+        socket.on("playerInfo", (msg) => {
+            /* playerInfo = cards in my hand */
+            document.getElementById("cardsInHand").innerHTML = "";
+            for(let card of msg.hand.cards) {
+                document.getElementById("cardsInHand").appendChild(cardImg(card));
+            }
+        });
+

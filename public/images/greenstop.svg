@@ -1,0 +1,21 @@
+<svg viewBox="0 0 250 350" xmlns="http://www.w3.org/2000/svg">
+  <rect width="250" height="350" rx="20" style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(0,0,0)"/>
+  <rect width="230" height="330" rx="10" x="10" y="10" style="fill:green;stroke-width:1;stroke:rgb(0,0,0)"/>
+    
+  <ellipse cx="210" cy="35" rx="120" ry="70" style="fill:none;stroke:white;stroke-width:10" transform="rotate(45,0,0)"/>
+  
+  <ellipse stroke-width="15" ry="45" rx="45" cy="175" cx="125" stroke="#000" fill="none"/>
+  <line x1="90" y1="140" x2="160" y2="210"  stroke-width="15" stroke="#000" fill="none"/>
+  <ellipse stroke-width="15" ry="45" rx="45" cy="168" cx="118" stroke="#fff" fill="none"/>
+  <line x1="83" y1="133" x2="153" y2="203"  stroke-width="15" stroke="#fff" fill="none"/>
+  
+  <ellipse stroke-width="6" ry="14" rx="14" cy="34" cx="34" stroke="#000" fill="none"/>
+  <line x1="25" y1="25" x2="35" y2="35"  stroke-width="6" stroke="#000" fill="none"/>
+  <ellipse stroke-width="6" ry="14" rx="14" cy="32" cx="32" stroke="#fff" fill="none"/>
+  <line x1="23" y1="23" x2="40" y2="40"  stroke-width="6" stroke="#fff" fill="none"/>
+  
+  <ellipse stroke-width="6" ry="14" rx="14" cy="316" cx="216" stroke="#000" fill="none"/>
+  <line x1="205" y1="305" x2="225" y2="325"  stroke-width="6" stroke="#000" fill="none"/>
+  <ellipse stroke-width="6" ry="14" rx="14" cy="314" cx="214" stroke="#fff" fill="none"/>
+  <line x1="203" y1="303" x2="223" y2="323"  stroke-width="6" stroke="#fff" fill="none"/>
+</svg>

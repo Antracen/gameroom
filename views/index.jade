@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    form(action="/joinRoom" method="GET")
+      label(for='userName') User name:
+      br
+      input#userName(type='text' name='userName')
+      br
+      label(for='roomName') Room name:
+      br
+      input#roomName(type='text' name='roomName')
+      br
+      label(for='game') Game:
+      br
+      select#game(name='game')
+        option(value='uno') UNO
+      br
+      br
+      input(type='submit' value='Submit')

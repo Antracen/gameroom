@@ -1,0 +1,37 @@
+.gameArea {
+    background-color: #540903;
+}
+
+.pile {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.deck {
+    position: relative;
+    left: 15%;
+    top: 20%;
+    transform: translate(0%, -50%);
+}
+
+.pileCard {
+    position: absolute;
+    box-shadow: 5px 5px 4px "rgba(0,0,0,0.5)";
+}
+
+.card {
+    position: relative;
+    box-shadow: 5px 5px 4px black;
+    transition: transform 0.5s;
+}
+
+.cardsInHand {
+    position: relative;
+    white-space: nowrap;
+    /*overflow: hidden;*/
+    top: 180px;
+    left:50%;
+    transform: translate(-50%, 0%);
+}
