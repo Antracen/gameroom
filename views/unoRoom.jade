@@ -12,8 +12,20 @@ block gameBody
             p#cardsStatus(style="white-space: pre")
 
     script.
+        let timeOutHandle = null;
+
         function cardClicked(card) {
             socket.emit("placeCard", parseInt(card.getAttribute("position")));
+
+            if(timeOutHandle != null) {
+                clearTimeout(timeOutHandle);
+            }
+            timeOutHandle = setTimeout("endTurn();", 3000);
+        }
+
+        function endTurn() {
+            console.log("endTurn()");
+            socket.emit("endTurn");
         }
 
         function raiseCardInHandToHeight(card, height) {
@@ -109,7 +121,7 @@ block gameBody
             constructor() {
                 let cardWidth = 70;
                 this.elements = {
-                    gameArea: {width: 1000, height: 500},
+                    gameArea: {width: 900, height: 600},
                     pile: {width: 100, height: 100},
                     deck: {width: cardWidth, height: null},
                     cardsInHand: {width: 600, height: 100},
@@ -158,7 +170,8 @@ block gameBody
                 console.log("Placing new card on deck", msg.pile[i]);
                 document.getElementById("pile").appendChild(pileCardImg(msg.pile[i], true));
             }
-            // document.getElementById("cardsInHand").innerHTML = "";
+
+            document.getElementById("cardsStatus").innerHTML += "It is " + msg.whosTurn + " turn to place cards\n";
 
             domHandler.resizeDomElements();
         });
