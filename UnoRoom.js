@@ -139,10 +139,10 @@ class UnoRoom extends AbstractRoom {
         else if(cardPlaced.number == "dirSwap") {
             this.handlePlacedDirSwapCard();
         }
-        else if(cardPlaced.number == "+2") {
+        else if(cardPlaced.number === "+2") {
             this.handlePlacedPickupCard(player, 2);
         }
-        else if(cardPlaced.number == "+4") {
+        else if(cardPlaced.number === "+4") {
             this.handlePlacedPickupCard(player, 4);
         }
         else {
@@ -185,13 +185,13 @@ class UnoRoom extends AbstractRoom {
 
         console.log("Check if we can place ", cardToPlace, " on top of ", topCard);
 
-        if(cardToPlace.number == "+4" || cardToPlace.number == "colorChoice") {
+        if(cardToPlace.number === "+4" || cardToPlace.number == "colorChoice") {
             if(topCard.number == cardToPlace.number) return true;
 
-            if(this.waitingForMultipleCards) return false;
+            return !this.waitingForMultipleCards;
         }
 
-        if(topCard.number == "+4") {
+        if(topCard.number === "+4") {
             if(this.waitingForMultipleCards) {
                 // Self place must be a +4
                 return cardToPlace.number == topCard.number;
@@ -211,7 +211,7 @@ class UnoRoom extends AbstractRoom {
                 return true;
             }
         }
-        else if(topCard.number == "+2") {
+        else if(topCard.number === "+2") {
             if(this.waitingForMultipleCards) {
                 // Self place must be a +2
                 return cardToPlace.number == topCard.number;
@@ -224,7 +224,7 @@ class UnoRoom extends AbstractRoom {
             if(this.waitingForMultipleCards) {
                 // Self place can only keep placing cards if we are pending
                 if(this.pendingWhosTurn == player) {
-                    return cardToPlace.color == topCard.color;
+                    return cardToPlace.color == topCard.color || cardToPlace.number == topCard.number;
                 }
                 else {
                     return cardToPlace.number == topCard.number;
@@ -306,6 +306,7 @@ class UnoRoom extends AbstractRoom {
 
     leaveRoom(params, socket){
         super.leaveRoom(params.userName, socket);
+        /* TODO: Implement */
         this.sendToAll("roomInfo", this.roomInfo());
     }
 }

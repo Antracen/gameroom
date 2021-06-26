@@ -5,3 +5,7 @@
 - Fixa grafiken så man kan skala storleken
 - Fixa grafiken så man tydligare ser vems tur det är etc.
 - Fixa "UNO!" hantering när man har ett kort kvar
+- Fixa så timeout inte startar om när det inte är ett lagligt drag
+- Gör så man enklare ser vems tur det är
+- Fixa jump in mechanic
+- Fixa leaveRoom
